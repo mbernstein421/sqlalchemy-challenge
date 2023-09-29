@@ -20,7 +20,7 @@ Base = automap_base()
 Base.prepare(autoload_with=engine)
 
 # Save references to each table
-stations = Base.classes.stations
+station = Base.classes.station
 
 # Create our session (link) from Python to the DB
 from sqlalchemy.orm import Session
@@ -41,36 +41,39 @@ def homepage():
     """List all available api routes."""
     return (
         f"Available Routes:<br/>"
-        f"/api/v1.0/stations"
+        f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/temp/start<br/>"
+        f"/api/v1.0/temp/start/end<br/>"
+        f"<p>'start' and 'end' date should be in the format MMDDYYYY.</p>"
+
     )
 
 
-
-@app.route("/api/v1.0/stations")
+@app.route("/api/v1.0/passengers")
 def passengers():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
     """Return a list of passenger data including the name, age, and sex of each passenger"""
     # Query all passengers
-    results = session.query(stations.name, stations.date, stations.precipitation).all()
+    results = session.query(passengers.name, passengers.age, passengers.sex).all()
 
     session.close()
 
     # Create a dictionary from the row data and append to a list of all_passengers
     all_passengers = []
-    for name, date, precipitation in results:
-        stations_dict = {}
-        stations_dict["name"] = name
-        stations_dict["date"] = date
-        stations_dict["precipitation"] = precipitation
-        all_stations.append(stations_dict)
+    for name, age, sex in results:
+        passengers_dict = {}
+        passengers_dict["name"] = name
+        passengers_dict["age"] = age
+        passengers_dict["sex"] = sex
+        all_passengers.append(passenger_dict)
 
-    return jsonify(all_stations)
+    return jsonify(all_passengers)
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
     
 #Convert the query results from your precipitation analysis (i.e. retrieve only the last 12 months of data) to a dictionary using date as the key and prcp as the value.
 
@@ -94,3 +97,6 @@ def stations():
     station_list = [result[0] for result in results]
 
     return jsonify(station_list)
+
+if __name__ == '__main__':
+    app.run(debug=True)
